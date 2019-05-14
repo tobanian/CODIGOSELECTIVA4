@@ -98,17 +98,28 @@ class LearningSwitch (object):
     # Este metodo en particular, envia hacia una fila determinada por el ultimo octeto de la IP de origen, si la direccion es 10.0.0.1 enviara a la fila 1
     # note que tomamos el parametro "port" que nos indica el puerto de destino 
 
-    packet = event.parsed
-    ip_packet = packet.payload
-    ip_origen = ip_packet.srcip
+    hora_actual = time.strftime('%H:%M:%S')
+    arreglo = hora_actual.split(":")
+    id_fila = 0
 
-    id_fila = str(ip_origen).split(".")[3]
+    if hora_actual[0]>6:00:00 and hora_actual<8:00:00:
+       id_fila =1
+       print "[%s]Network with low speed :(" % time.strftime("%H:%M:%S")
+    elif:
+       id_fila = 2
+       print "[%s]Network high speed :(" % time.strftime ("%H:%M:%S")
+
+    packet = event.parsed
+    #ip_packet = packet.payload
+    #ip_origen = ip_packet.srcip
+
+    #id_fila = str(ip_origen).split(".")[3]
     print "La fila seria: ", id_fila
 
     msg = of.ofp_flow_mod()
     msg.match = of.ofp_match.from_packet(packet, event.port)
-    msg.idle_timeout = 10
-    msg.hard_timeout = 30
+    msg.idle_timeout = 60
+    msg.hard_timeout = 5000
 
     # La unica diferencia respecto a un "output" normal, es que agregamos el id de la fila
     msg.actions.append(of.ofp_action_enqueue(port = port, queue_id=int(id_fila)))
